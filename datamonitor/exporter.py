@@ -56,7 +56,7 @@ class Exporter:
     @staticmethod
     def _to_csv(snapshots: list[MetricSnapshot]) -> str:
         buf = io.StringIO()
-        w = csv.writer(buf)
+        w = csv.writer(buf, lineterminator="\n")
         w.writerow(["source", "target", "status", "row_count", "size_mb", "collected_at"])
         for s in snapshots:
             w.writerow([
@@ -75,7 +75,7 @@ class Exporter:
             f"{'Source':<16} {'Target':<20} {'Row Count':>12}"
             f" {'Size':>10} {'Status':<12} {'Collected At'}"
         )
-        sep = "─" * 86
+        sep = "-" * 86
         lines = [hdr, sep]
         for s in snapshots:
             rc = s.metrics.get("row_count", s.metrics.get("key_count", "—"))
