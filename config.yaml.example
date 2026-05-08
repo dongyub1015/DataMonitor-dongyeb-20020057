@@ -1,0 +1,52 @@
+refresh_interval: 5
+max_rows_preview: 20
+snapshot_dir: "./snapshots"
+log_level: "WARNING"
+
+sources:
+  - name: SQLite-Example
+    type: sqlite
+    path: "./example.db"
+    watch:
+      - table: my_table
+        metrics: [row_count, size_mb]
+
+  - name: MySQL-Prod
+    type: mysql
+    host: localhost
+    port: 3306
+    database: app_db
+    user: monitor_user
+    password: "${MYSQL_MONITOR_PASSWORD}"
+    watch:
+      - table: orders
+        metrics: [row_count, size_mb]
+      - table: users
+        metrics: [row_count]
+
+  - name: Redis-Cache
+    type: redis
+    host: localhost
+    port: 6379
+    db: 0
+    watch:
+      - pattern: "session:*"
+        metrics: [key_count, memory_usage_mb]
+
+alerts:
+  - source: MySQL-Prod
+    target: orders
+    metric: row_count
+    condition: ">= 10000"
+    level: warning
+  - source: MySQL-Prod
+    target: orders
+    metric: row_count
+    condition: ">= 50000"
+    level: critical
+
+masking:
+  - source: MySQL-Prod
+    table: users
+    columns: [password_hash]
+    replacement: "***"
