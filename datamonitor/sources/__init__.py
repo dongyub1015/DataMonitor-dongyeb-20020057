@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING
 
 from .base import DataSource, MetricSnapshot, RowPreview, SourceStatus
 from .mysql import MySQLSource
+from .postgres import PostgresSource
+from .redis import RedisSource
 from .sqlite import SQLiteSource
 
 if TYPE_CHECKING:
@@ -22,6 +24,8 @@ def create_source(config: "SourceConfig") -> DataSource:
     mapping: dict[str, type[DataSource]] = {
         "sqlite": SQLiteSource,
         "mysql": MySQLSource,
+        "postgres": PostgresSource,
+        "redis": RedisSource,
     }
     cls = mapping.get(config.type)
     if cls is None:

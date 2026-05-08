@@ -28,11 +28,13 @@ class MetricSnapshot:
 
     @property
     def row_count(self) -> int | None:
-        return self.metrics.get("row_count")
+        # Redis 소스는 key_count를 폴백으로 사용
+        return self.metrics.get("row_count") or self.metrics.get("key_count")
 
     @property
     def size_mb(self) -> float | None:
-        return self.metrics.get("size_mb")
+        # Redis 소스는 memory_usage_mb를 폴백으로 사용
+        return self.metrics.get("size_mb") or self.metrics.get("memory_usage_mb")
 
 
 @dataclass
